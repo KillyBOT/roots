@@ -1,53 +1,76 @@
 extends Node2D
 
-signal split(split_point: Vector2)
+@export var max_root_click_dist_squared = 1250.0
+@export var split_button = MOUSE_BUTTON_LEFT
+@export var stop_button = MOUSE_BUTTON_RIGHT
+@export var growth_speed: float = 100.0  # Pixels per second
+@export var split_angle: float = PI/6
 
-const split_button = MOUSE_BUTTON_LEFT
+var left_direction = Vector2.DOWN.rotated(split_angle)
+var right_direction = Vector2.DOWN.rotated(-split_angle)
 
-func orthogonal_projection_on_root(root: Line2D, p: Vector2) -> Vector2:
-	var l0 = root.points[0]
-	var l1 = root.points[1]
-	var s = l1 - l0
-	var v = p - l0
-	return s * (v.dot(s) / s.dot(s)) + l0
+var _do_split : bool = false
+var _do_stop : bool = false
 
-func is_point_on_root(root: Line2D, p: Vector2) -> bool:
-	var l0 = root.points[0]
-	var l1 = root.points[1]
-	var v_p = p - l0
-	var v_l = l1 - l0
-	
-	return v_p.dot(v_l) > 0 and v_p.dot(v_l) < v_l.dot(v_l)
+@onready var _highlight: Node2D = $highlight
+@onready var _camera: Camera2D = $camera
+
+@onready var num_roots_growing = 1
+@onready var max_root_depth = 0
+@onready var _half_screen_height = _camera.get_viewport().size[1] / 2
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	pass # Replace with function body.
-
+	$init_root.direction = left_direction
+	$init_root.parent = self
+	
 func _input(event):
-	if event is not InputEventMouseButton or not event.pressed:
-		return
-
-	match event.button_index:
-		split_button:
-			# Get the clicked position in local coordinates
-			var click_position = get_local_mouse_position()
-			
-			var closest_root = get_node("root")
-			var p_min = orthogonal_projection_on_root(closest_root, click_position)
-			var p_min_dist = (click_position - p_min).dot(click_position - p_min)
-			for root in get_children():
-				if root is Line2D:
-					var p = orthogonal_projection_on_root(root, click_position)
-					var dist = (click_position - p).dot(click_position - p)
-					if is_point_on_root(root, p) and dist < p_min_dist:
-						p_min = p
-						p_min_dist = dist
-						closest_root = root
-
-			# Find the closest point on the root to the clicked position
-			# Split the root at the closest point
-			closest_root.split_at(p_min)
+	if event is InputEventMouseButton and event.pressed:
+		match event.button_index:
+			split_button:
+				_do_split = true
+			stop_button:
+				_do_stop = true
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
+func _process(_delta: float) -> void:
+	# Update closest root
+	var mouse_pos = get_local_mouse_position()
+	var closest_root = null
+	var split_pos = null
+	var min_dist_from_mouse = max_root_click_dist_squared
+
+	for root in get_children():
+		if root is Area2D:
+			var p : Vector2 = root.orthogonal_projection(mouse_pos)
+			var dist_from_mouse = p.distance_squared_to(mouse_pos)
+			
+			if root.point_on_root(p) and dist_from_mouse < min_dist_from_mouse:
+				split_pos = p
+				min_dist_from_mouse = dist_from_mouse
+				closest_root = root
+
+	_highlight.visible = closest_root != null
+	if closest_root != null:
+		_highlight.position = split_pos
+		#_highlight.queue_redraw()
+
+	if _do_split and closest_root != null:
+		closest_root.split_at(split_pos)
+	
+	if _do_stop and closest_root != null:
+		closest_root.stop_growing()
+
+	# Remove any queued events
+	_do_split = false
+	_do_stop = false
+	
+	for root in get_children():
+		if root is Area2D:
+			if root.is_growing:
+				max_root_depth = max(max_root_depth, root.line.points[-1][1])
+			elif not root.is_on_screen(_camera.position[1] - _half_screen_height):
+				root.queue_free()
+	_camera.position[1] = max_root_depth
+	if num_roots_growing == 0:
+		print("Game over! Root depth: ", _camera.position[1])
