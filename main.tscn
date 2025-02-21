@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://drpa4emtyqlfk"]
+
+[ext_resource type="PackedScene" uid="uid://dgwbcj75pnvps" path="res://root_system.tscn" id="2_3xgq3"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_8f2c2"]
+normal = Vector2(1, 0)
+distance = -480.0
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_6new2"]
+normal = Vector2(-1, 0)
+distance = -480.0
+
+[node name="main" type="Node"]
+
+[node name="root_system" parent="." instance=ExtResource("2_3xgq3")]
+growth_speed = 250.0
+
+[node name="border" type="Area2D" parent="."]
+
+[node name="left" type="CollisionShape2D" parent="border"]
+shape = SubResource("WorldBoundaryShape2D_8f2c2")
+
+[node name="right" type="CollisionShape2D" parent="border"]
+shape = SubResource("WorldBoundaryShape2D_6new2")
