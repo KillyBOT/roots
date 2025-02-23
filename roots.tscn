@@ -1,8 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://dgwbcj75pnvps"]
+[gd_scene load_steps=7 format=3 uid="uid://dgwbcj75pnvps"]
 
 [ext_resource type="Script" path="res://root.gd" id="1_prpye"]
 [ext_resource type="Script" path="res://roots.gd" id="1_s2xkx"]
 [ext_resource type="Script" path="res://highlight.gd" id="3_00w5e"]
+[ext_resource type="Texture2D" uid="uid://bjr4rmop65gld" path="res://art_assets/Root_texture.png" id="4_iwe1p"]
+[ext_resource type="Texture2D" uid="uid://qdj0cn5bss2u" path="res://art_assets/Soil.png" id="5_u8w7v"]
 
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_jf5eb"]
 b = Vector2(0, 0)
@@ -30,8 +32,28 @@ one_way_collision_margin = 0.0
 [node name="Line2D" type="Line2D" parent="init_root"]
 points = PackedVector2Array(0, 0, 0, 0)
 width = 5.0
+texture = ExtResource("4_iwe1p")
+texture_mode = 1
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="init_root"]
+
+[node name="ParallaxBackground2" type="ParallaxBackground" parent="."]
+
+[node name="ParallaxLayer" type="ParallaxLayer" parent="ParallaxBackground2"]
+motion_mirroring = Vector2(512, 512)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground2/ParallaxLayer"]
+scale = Vector2(2, 2)
+texture = ExtResource("5_u8w7v")
+centered = false
+
+[node name="ParallaxLayer2" type="ParallaxLayer" parent="ParallaxBackground2"]
+motion_mirroring = Vector2(512, 512)
+
+[node name="Sprite2D" type="Sprite2D" parent="ParallaxBackground2/ParallaxLayer2"]
+position = Vector2(255, 1279)
+scale = Vector2(2, 2)
+texture = ExtResource("5_u8w7v")
 
 [connection signal="area_entered" from="init_root" to="init_root" method="_on_area_entered"]
 [connection signal="screen_exited" from="init_root/VisibleOnScreenNotifier2D" to="init_root" method="_on_exited_screen"]

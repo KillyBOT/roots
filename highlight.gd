@@ -8,5 +8,5 @@ extends Control
 @onready var split_direction: Vector2 = Vector2.DOWN
 
 func _draw():
-    draw_circle(Vector2.ZERO, radius, color, false, circle_width)
-    draw_line(Vector2.ZERO, split_direction * radius, color, line_width)
+	draw_circle(Vector2.ZERO, radius, color, false, circle_width)
+	draw_line(Vector2.ZERO, split_direction * radius, color, line_width)

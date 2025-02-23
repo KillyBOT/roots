@@ -29,3 +29,7 @@ version_control/autoload_on_startup=true
 [global_group]
 
 roots_can_touch=""
+
+[rendering]
+
+textures/canvas_textures/default_texture_repeat=1
