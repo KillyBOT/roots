@@ -22,7 +22,7 @@ var _do_stop : bool = false
 
 
 @onready var _highlight: Control = $highlight
-@onready var _camera: Camera2D = $camera
+
 
 @onready var running : bool = false
 @onready var num_growing: int = 1
@@ -90,7 +90,6 @@ func _process(_delta: float) -> void:
     _do_split = false
     _do_stop = false
         
-    _camera.position[1] = depth
     if num_growing == 0:
         no_roots_growing.emit()
 

@@ -1,20 +1,23 @@
 [gd_scene load_steps=4 format=3 uid="uid://cafb54snlitpq"]
 
 [ext_resource type="Script" path="res://collectable.gd" id="1_dveak"]
+[ext_resource type="Texture2D" uid="uid://b6wsesff1owgc" path="res://fertilizer.png" id="2_p0ln5"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_cx4y8"]
-radius = 35.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dffw2"]
+size = Vector2(128, 128)
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_xh8lc"]
-size = Vector2(50, 50)
-
-[node name="collectable" type="Area2D" groups=["roots_can_touch"]]
+[node name="collectable" type="Area2D" groups=["clear_on_start", "roots_can_touch"]]
 script = ExtResource("1_dveak")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_cx4y8")
+shape = SubResource("RectangleShape2D_dffw2")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = SubResource("PlaceholderTexture2D_xh8lc")
+texture_filter = 1
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_p0ln5")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
 
 [connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_screen_exited"]

@@ -1,9 +1,11 @@
-[gd_scene load_steps=2 format=3 uid="uid://bmxdlthmoupb0"]
+[gd_scene load_steps=3 format=3 uid="uid://bmxdlthmoupb0"]
 
 [ext_resource type="Script" path="res://hud.gd" id="1_jx0wt"]
+[ext_resource type="Script" path="res://level_select_button.gd" id="2_bqvqo"]
 
 [node name="HUD" type="CanvasLayer"]
 script = ExtResource("1_jx0wt")
+max_starting_level = 10
 
 [node name="score" type="Label" parent="."]
 visible = false
@@ -44,10 +46,9 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -56.0
-offset_top = -15.5
-offset_right = 56.0
-offset_bottom = 15.5
+offset_left = -60.0
+offset_right = 60.0
+offset_bottom = 32.0
 grow_horizontal = 2
 grow_vertical = 2
 text = "Play"
@@ -100,5 +101,23 @@ theme_override_font_sizes/font_size = 40
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[connection signal="pressed" from="start_button" to="." method="_on_pressed"]
-[connection signal="pressed" from="restart_button" to="." method="_on_pressed"]
+[node name="level_select" type="Button" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -60.0
+offset_top = 64.0
+offset_right = 60.0
+offset_bottom = 96.0
+grow_horizontal = 2
+grow_vertical = 2
+button_mask = 3
+text = "Level: 1"
+script = ExtResource("2_bqvqo")
+
+[connection signal="pressed" from="start_button" to="." method="_on_start_button_pressed"]
+[connection signal="pressed" from="restart_button" to="." method="_on_start_button_pressed"]
+[connection signal="decrease_level" from="level_select" to="." method="_on_decrease_level"]
+[connection signal="increase_level" from="level_select" to="." method="_on_increase_level"]

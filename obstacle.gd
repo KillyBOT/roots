@@ -10,11 +10,5 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
     pass
 
-func _on_area_entered(_area: Area2D) -> void:
-    if _area.is_in_group("is_root"):
-        collected.emit()
-        queue_free()
-
-
 func _on_screen_exited() -> void:
     queue_free()

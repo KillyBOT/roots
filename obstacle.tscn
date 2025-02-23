@@ -1,0 +1,21 @@
+[gd_scene load_steps=3 format=3 uid="uid://btydbgcfdqphd"]
+
+[ext_resource type="Script" path="res://obstacle.gd" id="1_j4hm8"]
+[ext_resource type="Texture2D" uid="uid://741dc164kcmn" path="res://rock.png" id="2_048eo"]
+
+[node name="obstacle" type="Area2D" groups=["clear_on_start"]]
+script = ExtResource("1_j4hm8")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_048eo")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+visible = false
+position = Vector2(3, 1.90735e-06)
+scale = Vector2(6.9, 4.8)
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(24, 56, 80, 32, 80, 0, 48, -56, -28, -55, -80, 8, -80, 40, -64, 56)
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_screen_exited"]

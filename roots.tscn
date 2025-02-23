@@ -1,15 +1,16 @@
-[gd_scene load_steps=5 format=3 uid="uid://dgwbcj75pnvps"]
+[gd_scene load_steps=6 format=3 uid="uid://dgwbcj75pnvps"]
 
 [ext_resource type="Script" path="res://root.gd" id="1_prpye"]
 [ext_resource type="Script" path="res://roots.gd" id="1_s2xkx"]
 [ext_resource type="Script" path="res://highlight.gd" id="3_00w5e"]
+[ext_resource type="Texture2D" uid="uid://dofur3uqvv1wc" path="res://root.png" id="4_mcss3"]
 
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_jf5eb"]
 b = Vector2(0, 0)
 
-[node name="roots" type="Node2D"]
+[node name="roots" type="Node2D" groups=["clear_on_start"]]
 script = ExtResource("1_s2xkx")
-max_roots_growing = 8
+max_roots_growing = 4
 
 [node name="highlight" type="Control" parent="."]
 visible = false
@@ -18,9 +19,7 @@ layout_mode = 3
 anchors_preset = 0
 script = ExtResource("3_00w5e")
 
-[node name="camera" type="Camera2D" parent="."]
-
-[node name="init_root" type="Area2D" parent="."]
+[node name="init_root" type="Area2D" parent="." groups=["is_root"]]
 script = ExtResource("1_prpye")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="init_root"]
@@ -28,8 +27,11 @@ shape = SubResource("SegmentShape2D_jf5eb")
 one_way_collision_margin = 0.0
 
 [node name="Line2D" type="Line2D" parent="init_root"]
+texture_filter = 1
 points = PackedVector2Array(0, 0, 0, 0)
-width = 5.0
+width = 32.0
+texture = ExtResource("4_mcss3")
+texture_mode = 1
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="init_root"]
 

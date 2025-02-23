@@ -16,21 +16,34 @@ signal next_level
 @export var min_growth_speed: float
 ## The ending speed; the speed at max level
 @export var max_growth_speed: float
-@export var min_depth_until_collectable: float
-## The maximum depth between collectables
-@export var max_depth_until_collectable: float
+## The minimum vertical spacing between collectables
+@export var min_next_collectable_depth: float
+## The maximum vertical spacing between collectables
+@export var max_next_collectable_depth: float
 ## The number of points to get for each collectable
 @export var points_per_collectable: float
+## The minimum vertical spacing between static obstacles
+@export var min_next_obstacle_depth: float
+## The maximum vertical spacing between static obstacles
+@export var max_next_obstacle_depth: float
+## The minimum vertical spacing between static obstacles
+@export var min_next_big_obstacle_depth: float
+## The maximum vertical spacing between static obstacles
+@export var max_next_big_obstacle_depth: float
 
 @export var collectable: PackedScene
+@export var static_obstacle: PackedScene
+@export var big_static_obstacle: PackedScene
 @export var roots: PackedScene
 
 @onready var _roots: Node2D = null
 @onready var _hud: CanvasLayer = $HUD
+@onready var _camera: Camera2D = $background/camera
 
 @onready var _half_screen_height: float = get_viewport().size[1] / 2.0
 @onready var _half_screen_width: float = get_viewport().size[0] / 2.0
-var _depth_until_collectable: float
+var _next_collectable_depth: float
+var _next_obstacle_depth: float
 var _prev_depth: float
 
 @onready var running: bool = false
@@ -56,31 +69,41 @@ func _process(_delta: float) -> void:
     score += (delta_depth * depth_multiplier) * _roots.num_growing * level * level_multiplier
     
     # Update level
-    if level < max_level and _prev_depth > (level * level_length * (1 + level)) / 2.0:
+    if level < max_level and _prev_depth > (level * level_length * (1 + level * 0.5)) / 2.0:
         next_level.emit()
     
-    _hud.update(_prev_depth, int(score), _roots.num_growing, level)
+    _hud.update_score(_prev_depth, int(score), _roots.num_growing, level)
         
-    # Spawn a collectable, if possible
-    while _roots.depth + _half_screen_height > _depth_until_collectable:
+    # Spawn collectables and obstacles
+    while _roots.depth + _half_screen_height * 1.5 > _next_collectable_depth:
         
         var new_collectable = collectable.instantiate()
-        new_collectable.position = Vector2(randf_range(-_half_screen_width, _half_screen_width), _depth_until_collectable)
+        new_collectable.position = Vector2(randf_range(-_half_screen_width, _half_screen_width), _next_collectable_depth)
         new_collectable.collected.connect(_on_collectable_collected)
         add_child(new_collectable)
         
-        _depth_until_collectable += randf_range(min_depth_until_collectable, max_depth_until_collectable)
+        _next_collectable_depth += randf_range(min_next_collectable_depth, max_next_collectable_depth)
     
+    while _roots.depth + _half_screen_height * 1.5 > _next_obstacle_depth:
+        
+        var new_obstacle = static_obstacle.instantiate()
+        new_obstacle.position = Vector2(randf_range(-_half_screen_width, _half_screen_width), _next_obstacle_depth)
+        add_child(new_obstacle)
+        
+        _next_obstacle_depth += randf_range(min_next_obstacle_depth, max_next_obstacle_depth)
+    
+    _camera.position[1] = _roots.depth
     _prev_depth = _roots.depth
 
 func _start_game() -> void:
     game_start.emit()
 func _on_game_start() -> void:
-    level = 1
+    for child in get_children():
+        if child.is_in_group("clear_on_start"):
+            child.queue_free()
+
+    level = _hud.starting_level
     score = 0.0
-    
-    if _roots != null:
-        _roots.queue_free()
     _roots = roots.instantiate()
     add_child(_roots)
     
@@ -90,7 +113,9 @@ func _on_game_start() -> void:
     game_over.connect(Callable(_roots, "_on_game_over"))
 
     _prev_depth = _roots.depth
-    _depth_until_collectable = _half_screen_height + randf_range(min_depth_until_collectable, max_depth_until_collectable)
+    _next_collectable_depth = _half_screen_height + randf_range(min_next_collectable_depth, max_next_collectable_depth)
+    _next_obstacle_depth = _half_screen_height + randf_range(min_next_obstacle_depth, max_next_obstacle_depth)
+    
     _update_growth_speed()
     
     running = true
