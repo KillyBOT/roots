@@ -1,6 +1,9 @@
-[gd_scene load_steps=4 format=3 uid="uid://drpa4emtyqlfk"]
+[gd_scene load_steps=7 format=3 uid="uid://drpa4emtyqlfk"]
 
-[ext_resource type="PackedScene" uid="uid://dgwbcj75pnvps" path="res://root_system.tscn" id="2_3xgq3"]
+[ext_resource type="Script" path="res://main.gd" id="1_kxj7a"]
+[ext_resource type="PackedScene" uid="uid://cafb54snlitpq" path="res://collectable.tscn" id="2_5eard"]
+[ext_resource type="PackedScene" uid="uid://dgwbcj75pnvps" path="res://roots.tscn" id="2_qmf5s"]
+[ext_resource type="PackedScene" uid="uid://bmxdlthmoupb0" path="res://hud.tscn" id="3_tumxr"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_8f2c2"]
 normal = Vector2(1, 0)
@@ -11,14 +14,32 @@ normal = Vector2(-1, 0)
 distance = -480.0
 
 [node name="main" type="Node"]
+script = ExtResource("1_kxj7a")
+depth_multiplier = 0.1
+level_multiplier = 1.0
+level_length = 4000.0
+max_level = 10
+min_growth_speed = 150.0
+max_growth_speed = 500.0
+min_depth_until_collectable = 100.0
+max_depth_until_collectable = 1000.0
+points_per_collectable = 800.0
+collectable = ExtResource("2_5eard")
+roots = ExtResource("2_qmf5s")
 
-[node name="root_system" parent="." instance=ExtResource("2_3xgq3")]
-growth_speed = 250.0
-
-[node name="border" type="Area2D" parent="."]
+[node name="border" type="Area2D" parent="." groups=["part_of_roots"]]
 
 [node name="left" type="CollisionShape2D" parent="border"]
 shape = SubResource("WorldBoundaryShape2D_8f2c2")
 
 [node name="right" type="CollisionShape2D" parent="border"]
 shape = SubResource("WorldBoundaryShape2D_6new2")
+
+[node name="HUD" parent="." instance=ExtResource("3_tumxr")]
+
+[connection signal="game_over" from="." to="." method="_on_game_over"]
+[connection signal="game_over" from="." to="HUD" method="_on_game_over"]
+[connection signal="game_start" from="." to="." method="_on_game_start"]
+[connection signal="game_start" from="." to="HUD" method="_on_game_start"]
+[connection signal="next_level" from="." to="." method="_on_next_level"]
+[connection signal="start_button_pressed" from="HUD" to="." method="_start_game"]

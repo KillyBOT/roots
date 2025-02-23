@@ -1,14 +1,15 @@
 [gd_scene load_steps=5 format=3 uid="uid://dgwbcj75pnvps"]
 
 [ext_resource type="Script" path="res://root.gd" id="1_prpye"]
-[ext_resource type="Script" path="res://root_system.gd" id="1_s2xkx"]
+[ext_resource type="Script" path="res://roots.gd" id="1_s2xkx"]
 [ext_resource type="Script" path="res://highlight.gd" id="3_00w5e"]
 
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_jf5eb"]
 b = Vector2(0, 0)
 
-[node name="root_system" type="Node2D"]
+[node name="roots" type="Node2D"]
 script = ExtResource("1_s2xkx")
+max_roots_growing = 8
 
 [node name="highlight" type="Control" parent="."]
 visible = false
@@ -30,6 +31,7 @@ one_way_collision_margin = 0.0
 points = PackedVector2Array(0, 0, 0, 0)
 width = 5.0
 
-[connection signal="game_over" from="." to="." method="_on_game_over"]
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="init_root"]
+
 [connection signal="area_entered" from="init_root" to="init_root" method="_on_area_entered"]
-[connection signal="root_hit" from="init_root" to="." method="_on_root_hit"]
+[connection signal="screen_exited" from="init_root/VisibleOnScreenNotifier2D" to="init_root" method="_on_exited_screen"]
