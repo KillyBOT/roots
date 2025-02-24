@@ -65,7 +65,8 @@ var _prev_depth: float
 
 @onready var running: bool = false
 @onready var paused: bool = false
-@onready var level: int = 1
+var level: int = 1
+var starting_level: int = 1
 @onready var score: float = 0.0
 
 # A simple linear interpolation
@@ -89,7 +90,7 @@ func _process(_delta: float) -> void:
     score += (delta_depth * depth_multiplier) * _roots.num_growing * level * level_multiplier
     
     # Update level
-    if level < max_level and _prev_depth > (level * level_length * (1 + level * 0.5)) / 2.0:
+    if level < max_level and _prev_depth > ((level - starting_level + 1) * level_length * (starting_level + level * 0.5)) / 2.0:
         next_level.emit()
     
     _hud.update_score(_prev_depth, int(score), _roots.num_growing, level)
@@ -156,6 +157,7 @@ func _on_game_start() -> void:
         if child.is_in_group("clear_on_start"):
             child.queue_free()
 
+    starting_level = _hud.starting_level
     level = _hud.starting_level
     score = 0.0
     _roots = roots.instantiate()
