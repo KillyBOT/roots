@@ -3,6 +3,8 @@ extends Node
 signal game_over(final_score: int)
 signal game_start
 signal next_level
+signal pause
+signal resume
 
 const sprite_scale: float = 8.0
 
@@ -60,6 +62,7 @@ var _next_moving_obstacle_depth: float
 var _prev_depth: float
 
 @onready var running: bool = false
+@onready var paused: bool = false
 @onready var level: int = 1
 @onready var score: float = 0.0
 
@@ -69,12 +72,14 @@ func _update_growth_speed() -> void:
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+    pause.connect(Callable(_hud, "_on_pause"))
+    resume.connect(Callable(_hud, "_on_resume"))
     pass # Replace with function body.
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
     
-    if not running:
+    if not running or paused:
         return
         
     # Update score
@@ -118,6 +123,8 @@ func _process(_delta: float) -> void:
         var new_moving_obstacle = moving_obstacle.instantiate()
         
         game_over.connect(Callable(new_moving_obstacle, "_on_game_over"))
+        pause.connect(Callable(new_moving_obstacle, "_on_pause"))
+        resume.connect(Callable(new_moving_obstacle, "_on_resume"))
         
         if randi_range(0,1) == 0:
             new_moving_obstacle.position = Vector2(snappedf(-_half_screen_width, sprite_scale), _next_moving_obstacle_depth)
@@ -132,6 +139,13 @@ func _process(_delta: float) -> void:
     
     _camera.position[1] = _roots.depth
     _prev_depth = _roots.depth
+
+func _input(event: InputEvent) -> void:
+    if event.is_action_pressed("Pause") and running:
+        if not paused:
+            pause.emit()
+        else:
+            resume.emit()
 
 func _start_game() -> void:
     game_start.emit()
@@ -148,6 +162,8 @@ func _on_game_start() -> void:
     _roots.no_roots_growing.connect(_stop_current_game)
     _roots.roots_hit_something.connect(_stop_current_game)
     
+    pause.connect(Callable(_roots, "_on_pause"))
+    resume.connect(Callable(_roots, "_on_resume"))
     game_over.connect(Callable(_roots, "_on_game_over"))
 
     _prev_depth = _roots.depth
@@ -175,3 +191,11 @@ func _on_next_level() -> void:
 
 func _on_collectable_collected() -> void:
     score += points_per_collectable * level
+
+func _on_pause() -> void:
+    if not paused and running:
+        paused = true
+
+func _on_resume() -> void:
+    if paused and running:
+        paused = false

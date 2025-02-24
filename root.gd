@@ -10,6 +10,7 @@ var direction : Vector2
 @onready var _visible_notifier:VisibleOnScreenNotifier2D = $VisibleOnScreenNotifier2D
 
 @onready var growing : bool = true
+@onready var paused: bool = false
 @onready var _child_roots:Array[Area2D] = []
 var parent
 
@@ -37,7 +38,7 @@ func _ready():
     _child_roots = []
 
 func _process(delta):
-    if growing:
+    if growing and not paused:
         var growth_amount = parent.growth_speed * delta
         line.points[-1] += direction * growth_amount
         collider.shape.b += direction * growth_amount

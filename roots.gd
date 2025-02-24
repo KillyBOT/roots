@@ -20,11 +20,10 @@ var right_direction = Vector2.DOWN.rotated(-split_angle)
 var _do_split : bool = false
 var _do_stop : bool = false
 
-
 @onready var _highlight: Control = $highlight
 
-
 @onready var running : bool = false
+@onready var paused: bool = false
 @onready var num_growing: int = 1
 @onready var depth: float = 0.0
 @onready var growth_speed: float = 0.0
@@ -39,7 +38,7 @@ func _ready() -> void:
     init_root.collider.disabled = false
 
 func _input(event):
-    if event is InputEventMouseButton and event.pressed:
+    if not paused and event is InputEventMouseButton and event.pressed:
         match event.button_index:
             split_button:
                 _do_split = true
@@ -78,7 +77,7 @@ func _process(_delta: float) -> void:
         _highlight.position = split_pos
 
     # Anything after this only happens when running
-    if not running:
+    if not running or paused:
         return
     
     if _do_split and closest_root != null and num_growing < max_roots_growing:
@@ -100,3 +99,15 @@ func _on_game_over(_final_score: int) -> void:
             for root in get_children():
                 if root is Area2D:
                     root.stop_growing(false)
+
+func _on_pause():
+    paused = true
+    for root in get_children():
+        if root is Area2D:
+            root.paused = true
+
+func _on_resume():
+    paused = false
+    for root in get_children():
+        if root is Area2D:
+            root.paused = false

@@ -1,5 +1,7 @@
 extends Area2D
 
+@onready var anim: AnimatedSprite2D = $AnimatedSprite2D
+
 @onready var moving: bool = false
 var speed
 var direction
@@ -15,11 +17,19 @@ func _process(delta: float) -> void:
 
 func _on_screen_entered() -> void:
     moving = true
-    $AnimatedSprite2D.play()
+    anim.play()
 
 func _on_screen_exited() -> void:
     queue_free()
 
 func _on_game_over(_score: int) -> void:
     moving = false
-    $AnimatedSprite2D.stop()
+    anim.pause()
+
+func _on_pause() -> void:
+    moving = false
+    anim.pause()
+
+func _on_resume() -> void:
+    moving = true
+    anim.play()

@@ -12,6 +12,7 @@ signal start_button_pressed
 @onready var _level_select = $level_select
 @onready var _restart_button = $restart_button
 @onready var _game_over_text = $game_over_text
+@onready var _pause_text = $pause_text
 @onready var _final_score = $final_score
 
 @onready var starting_level = 1
@@ -24,6 +25,9 @@ func _ready() -> void:
     _title.show()
     _start_button.show()
     _level_select.show()
+    _game_over_text.hide()
+    _pause_text.hide()
+    _final_score.hide()
 
 func update_score(depth: float, score: int, num_growing: int, level: int) -> void:
     _score.text = str(score) + " x" + str(num_growing)
@@ -48,6 +52,7 @@ func _on_game_start() -> void:
     _level_select.hide()
     _restart_button.hide()
     _game_over_text.hide()
+    _pause_text.hide()
     _final_score.hide()
 
 func _on_game_over(final_score: int) -> void:
@@ -62,4 +67,10 @@ func _on_game_over(final_score: int) -> void:
     _level_select.show()
     _restart_button.show()
     _game_over_text.show()
+    _pause_text.hide()
     _final_score.show()
+
+func _on_pause() -> void:
+    _pause_text.show()
+func _on_resume() -> void:
+    _pause_text.hide()

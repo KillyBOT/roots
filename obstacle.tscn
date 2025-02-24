@@ -11,11 +11,10 @@ texture_filter = 1
 texture = ExtResource("2_048eo")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
-visible = false
-position = Vector2(3, 1.90735e-06)
-scale = Vector2(6.9, 4.8)
+position = Vector2(4, 4.76837e-06)
+scale = Vector2(9.2, 6.4)
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
-polygon = PackedVector2Array(24, 56, 80, 32, 80, 0, 48, -56, -28, -55, -80, 8, -80, 40, -64, 56)
+polygon = PackedVector2Array(24, 56, 80, 32, 80, 0, 48, -56, -26, -56, -80, 8, -80, 40, -64, 56)
 
 [connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_screen_exited"]

@@ -84,4 +84,6 @@ texture = ExtResource("7_type8")
 [connection signal="game_start" from="." to="." method="_on_game_start"]
 [connection signal="game_start" from="." to="HUD" method="_on_game_start"]
 [connection signal="next_level" from="." to="." method="_on_next_level"]
+[connection signal="pause" from="." to="." method="_on_pause"]
+[connection signal="resume" from="." to="." method="_on_resume"]
 [connection signal="start_button_pressed" from="HUD" to="." method="_start_game"]
