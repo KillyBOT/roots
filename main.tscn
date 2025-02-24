@@ -1,11 +1,13 @@
-[gd_scene load_steps=10 format=3 uid="uid://drpa4emtyqlfk"]
+[gd_scene load_steps=11 format=3 uid="uid://drpa4emtyqlfk"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_kxj7a"]
 [ext_resource type="PackedScene" uid="uid://cafb54snlitpq" path="res://collectable.tscn" id="2_5eard"]
 [ext_resource type="PackedScene" uid="uid://dgwbcj75pnvps" path="res://roots.tscn" id="2_qmf5s"]
 [ext_resource type="PackedScene" uid="uid://btydbgcfdqphd" path="res://obstacle.tscn" id="3_tlp4n"]
 [ext_resource type="PackedScene" uid="uid://bmxdlthmoupb0" path="res://hud.tscn" id="3_tumxr"]
+[ext_resource type="PackedScene" uid="uid://006p6ggptq5s" path="res://big_obstacle.tscn" id="4_bwqyt"]
 [ext_resource type="Texture2D" uid="uid://vsrth15j78iw" path="res://soil.png" id="6_t4eyi"]
+[ext_resource type="Texture2D" uid="uid://dt10c16hm5cia" path="res://sky.png" id="7_type8"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_8f2c2"]
 normal = Vector2(1, 0)
@@ -15,24 +17,24 @@ distance = -480.0
 normal = Vector2(-1, 0)
 distance = -480.0
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_u1vtg"]
-size = Vector2(960, 640)
-
 [node name="main" type="Node"]
 script = ExtResource("1_kxj7a")
 depth_multiplier = 0.1
 level_multiplier = 1.0
-level_length = 4000.0
+level_length = 5000.0
 max_level = 10
-min_growth_speed = 150.0
+min_growth_speed = 200.0
 max_growth_speed = 500.0
-min_next_collectable_depth = 128.0
-max_next_collectable_depth = 512.0
-points_per_collectable = 800.0
-min_next_obstacle_depth = 256.0
-max_next_obstacle_depth = 512.0
+min_next_collectable_depth = 150.0
+max_next_collectable_depth = 500.0
+points_per_collectable = 1000.0
+min_next_obstacle_depth = 250.0
+max_next_obstacle_depth = 500.0
+min_next_big_obstacle_depth = 2500.0
+max_next_big_obstacle_depth = 5000.0
 collectable = ExtResource("2_5eard")
-static_obstacle = ExtResource("3_tlp4n")
+obstacle = ExtResource("3_tlp4n")
+big_obstacle = ExtResource("4_bwqyt")
 roots = ExtResource("2_qmf5s")
 
 [node name="border" type="Area2D" parent="."]
@@ -67,9 +69,9 @@ z_index = -1
 texture_filter = 1
 offset_left = -480.0
 offset_top = -640.0
-offset_right = -440.0
-offset_bottom = -600.0
-texture = SubResource("PlaceholderTexture2D_u1vtg")
+offset_right = 480.0
+offset_bottom = 80.0
+texture = ExtResource("7_type8")
 
 [connection signal="game_over" from="." to="." method="_on_game_over"]
 [connection signal="game_over" from="." to="HUD" method="_on_game_over"]

@@ -4,6 +4,8 @@ signal game_over(final_score: int)
 signal game_start
 signal next_level
 
+const sprite_scale: float = 8.0
+
 ## The effect that depth should have on the total score.
 @export var depth_multiplier: float
 ## The effect that level should have on the total score.
@@ -32,8 +34,8 @@ signal next_level
 @export var max_next_big_obstacle_depth: float
 
 @export var collectable: PackedScene
-@export var static_obstacle: PackedScene
-@export var big_static_obstacle: PackedScene
+@export var obstacle: PackedScene
+@export var big_obstacle: PackedScene
 @export var roots: PackedScene
 
 @onready var _roots: Node2D = null
@@ -44,6 +46,7 @@ signal next_level
 @onready var _half_screen_width: float = get_viewport().size[0] / 2.0
 var _next_collectable_depth: float
 var _next_obstacle_depth: float
+var _next_big_obstacle_depth: float
 var _prev_depth: float
 
 @onready var running: bool = false
@@ -78,19 +81,27 @@ func _process(_delta: float) -> void:
     while _roots.depth + _half_screen_height * 1.5 > _next_collectable_depth:
         
         var new_collectable = collectable.instantiate()
-        new_collectable.position = Vector2(randf_range(-_half_screen_width, _half_screen_width), _next_collectable_depth)
+        new_collectable.position = Vector2(snappedf(randf_range(-_half_screen_width, _half_screen_width), sprite_scale), _next_collectable_depth)
         new_collectable.collected.connect(_on_collectable_collected)
         add_child(new_collectable)
         
-        _next_collectable_depth += randf_range(min_next_collectable_depth, max_next_collectable_depth)
+        _next_collectable_depth += snappedf(randf_range(min_next_collectable_depth, max_next_collectable_depth), sprite_scale)
     
     while _roots.depth + _half_screen_height * 1.5 > _next_obstacle_depth:
         
-        var new_obstacle = static_obstacle.instantiate()
-        new_obstacle.position = Vector2(randf_range(-_half_screen_width, _half_screen_width), _next_obstacle_depth)
+        var new_obstacle = obstacle.instantiate()
+        new_obstacle.position = Vector2(snappedf(randf_range(-_half_screen_width, _half_screen_width), sprite_scale), _next_obstacle_depth)
         add_child(new_obstacle)
         
-        _next_obstacle_depth += randf_range(min_next_obstacle_depth, max_next_obstacle_depth)
+        _next_obstacle_depth += snappedf(randf_range(min_next_obstacle_depth, max_next_obstacle_depth), sprite_scale)
+    
+    while _roots.depth + _half_screen_height * 1.5 > _next_big_obstacle_depth:
+        
+        var new_big_obstacle = big_obstacle.instantiate()
+        new_big_obstacle.position = Vector2(snappedf(randf_range(-_half_screen_width, _half_screen_width), sprite_scale), _next_big_obstacle_depth)
+        add_child(new_big_obstacle)
+        
+        _next_big_obstacle_depth += snappedf(randf_range(min_next_big_obstacle_depth, max_next_big_obstacle_depth), sprite_scale)
     
     _camera.position[1] = _roots.depth
     _prev_depth = _roots.depth
@@ -113,8 +124,9 @@ func _on_game_start() -> void:
     game_over.connect(Callable(_roots, "_on_game_over"))
 
     _prev_depth = _roots.depth
-    _next_collectable_depth = _half_screen_height + randf_range(min_next_collectable_depth, max_next_collectable_depth)
-    _next_obstacle_depth = _half_screen_height + randf_range(min_next_obstacle_depth, max_next_obstacle_depth)
+    _next_collectable_depth = _half_screen_height + snappedf(randf_range(min_next_collectable_depth, max_next_collectable_depth), sprite_scale)
+    _next_obstacle_depth = _half_screen_height + snappedf(randf_range(min_next_obstacle_depth, max_next_obstacle_depth), sprite_scale)
+    _next_big_obstacle_depth = _half_screen_height + snappedf(randf_range(min_next_big_obstacle_depth, max_next_big_obstacle_depth), sprite_scale)
     
     _update_growth_speed()
     
