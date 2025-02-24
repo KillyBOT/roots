@@ -1,9 +1,13 @@
-[gd_scene load_steps=6 format=3 uid="uid://dgwbcj75pnvps"]
+[gd_scene load_steps=10 format=3 uid="uid://dgwbcj75pnvps"]
 
 [ext_resource type="Script" path="res://root.gd" id="1_prpye"]
 [ext_resource type="Script" path="res://roots.gd" id="1_s2xkx"]
 [ext_resource type="Script" path="res://highlight.gd" id="3_00w5e"]
 [ext_resource type="Texture2D" uid="uid://dofur3uqvv1wc" path="res://root.png" id="4_mcss3"]
+[ext_resource type="AudioStream" uid="uid://cle1vgr0ved2h" path="res://split1.wav" id="5_8ctju"]
+[ext_resource type="AudioStream" uid="uid://durqom8k3iyp5" path="res://split2.wav" id="6_bk6ut"]
+[ext_resource type="AudioStream" uid="uid://485uxj1sclbc" path="res://split3.wav" id="7_5g1xj"]
+[ext_resource type="AudioStream" uid="uid://c1lblmyktaf00" path="res://split4.wav" id="8_5sjtm"]
 
 [sub_resource type="SegmentShape2D" id="SegmentShape2D_jf5eb"]
 b = Vector2(0, 0)
@@ -34,6 +38,20 @@ texture = ExtResource("4_mcss3")
 texture_mode = 1
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="init_root"]
+
+[node name="audio" type="Node" parent="."]
+
+[node name="split_1" type="AudioStreamPlayer" parent="audio"]
+stream = ExtResource("5_8ctju")
+
+[node name="split_2" type="AudioStreamPlayer" parent="audio"]
+stream = ExtResource("6_bk6ut")
+
+[node name="split_3" type="AudioStreamPlayer" parent="audio"]
+stream = ExtResource("7_5g1xj")
+
+[node name="split_4" type="AudioStreamPlayer" parent="audio"]
+stream = ExtResource("8_5sjtm")
 
 [connection signal="area_entered" from="init_root" to="init_root" method="_on_area_entered"]
 [connection signal="screen_exited" from="init_root/VisibleOnScreenNotifier2D" to="init_root" method="_on_exited_screen"]

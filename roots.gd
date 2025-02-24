@@ -21,6 +21,7 @@ var _do_split : bool = false
 var _do_stop : bool = false
 
 @onready var _highlight: Control = $highlight
+@onready var _split_sounds = [$audio/split_1, $audio/split_2, $audio/split_3, $audio/split_4]
 
 @onready var running : bool = false
 @onready var paused: bool = false
@@ -36,6 +37,8 @@ func _ready() -> void:
     init_root.collider.shape.a = position + left_direction
     init_root.collider.shape.b = position + left_direction
     init_root.collider.disabled = false
+    
+    _split_sounds[0].play()
 
 func _input(event):
     if not paused and event is InputEventMouseButton and event.pressed:
@@ -82,9 +85,12 @@ func _process(_delta: float) -> void:
     
     if _do_split and closest_root != null and num_growing < max_roots_growing:
         closest_root.split_at(split_pos)
+        _split_sounds[num_growing - 1].play()
     
     if _do_stop and closest_root != null:
         closest_root.stop_growing(true)
+        if num_growing > 0:
+            _split_sounds[num_growing - 1].play()
     
     _do_split = false
     _do_stop = false

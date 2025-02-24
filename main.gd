@@ -52,6 +52,8 @@ const sprite_scale: float = 8.0
 @onready var _roots: Node2D = null
 @onready var _hud: CanvasLayer = $HUD
 @onready var _camera: Camera2D = $background/camera
+@onready var _game_over: AudioStreamPlayer = $audio/game_over
+@onready var _collect: AudioStreamPlayer = $audio/collect
 
 @onready var _half_screen_height: float = get_viewport().size[1] / 2.0
 @onready var _half_screen_width: float = get_viewport().size[0] / 2.0
@@ -183,13 +185,14 @@ func _stop_current_game() -> void:
         game_over.emit(int(score))
 
 func _on_game_over(_final_score: int) -> void:
-    pass
+    _game_over.play()
 
 func _on_next_level() -> void:
     level += 1
     _update_growth_speed()
 
 func _on_collectable_collected() -> void:
+    _collect.play()
     score += points_per_collectable * level
 
 func _on_pause() -> void:

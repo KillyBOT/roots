@@ -15,6 +15,5 @@ func _on_area_entered(_area: Area2D) -> void:
         collected.emit()
     queue_free()
 
-
 func _on_screen_exited() -> void:
     queue_free()

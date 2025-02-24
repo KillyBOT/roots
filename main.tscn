@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://drpa4emtyqlfk"]
+[gd_scene load_steps=14 format=3 uid="uid://drpa4emtyqlfk"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_kxj7a"]
 [ext_resource type="PackedScene" uid="uid://cafb54snlitpq" path="res://collectable.tscn" id="2_5eard"]
@@ -9,6 +9,8 @@
 [ext_resource type="PackedScene" uid="uid://n5v7kbf75ohi" path="res://moving_obstacle.tscn" id="5_k4t7y"]
 [ext_resource type="Texture2D" uid="uid://vsrth15j78iw" path="res://soil.png" id="6_t4eyi"]
 [ext_resource type="Texture2D" uid="uid://dt10c16hm5cia" path="res://sky.png" id="7_type8"]
+[ext_resource type="AudioStream" uid="uid://b8ygsslmedxss" path="res://lose_2.wav" id="10_oa8u2"]
+[ext_resource type="AudioStream" uid="uid://2e6otihnkuuy" path="res://collect.wav" id="11_ugic6"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_8f2c2"]
 normal = Vector2(1, 0)
@@ -78,6 +80,14 @@ offset_top = -640.0
 offset_right = 480.0
 offset_bottom = 80.0
 texture = ExtResource("7_type8")
+
+[node name="audio" type="Node" parent="."]
+
+[node name="game_over" type="AudioStreamPlayer" parent="audio"]
+stream = ExtResource("10_oa8u2")
+
+[node name="collect" type="AudioStreamPlayer" parent="audio"]
+stream = ExtResource("11_ugic6")
 
 [connection signal="game_over" from="." to="." method="_on_game_over"]
 [connection signal="game_over" from="." to="HUD" method="_on_game_over"]
