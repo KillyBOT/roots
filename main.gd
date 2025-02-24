@@ -28,14 +28,23 @@ const sprite_scale: float = 8.0
 @export var min_next_obstacle_depth: float
 ## The maximum vertical spacing between static obstacles
 @export var max_next_obstacle_depth: float
-## The minimum vertical spacing between static obstacles
+## The minimum vertical spacing between big obstacles
 @export var min_next_big_obstacle_depth: float
-## The maximum vertical spacing between static obstacles
+## The maximum vertical spacing between big obstacles
 @export var max_next_big_obstacle_depth: float
+## The minimum vertical spacing between moving obstacles
+@export var min_next_moving_obstacle_depth: float
+## The maximum vertical spacing between moving obstacles
+@export var max_next_moving_obstacle_depth: float
+## The minimum vertical spacing between moving obstacles
+@export var min_moving_obstacle_speed: float
+## The maximum vertical spacing between moving obstacles
+@export var max_moving_obstacle_speed: float
 
 @export var collectable: PackedScene
 @export var obstacle: PackedScene
 @export var big_obstacle: PackedScene
+@export var moving_obstacle: PackedScene
 @export var roots: PackedScene
 
 @onready var _roots: Node2D = null
@@ -47,6 +56,7 @@ const sprite_scale: float = 8.0
 var _next_collectable_depth: float
 var _next_obstacle_depth: float
 var _next_big_obstacle_depth: float
+var _next_moving_obstacle_depth: float
 var _prev_depth: float
 
 @onready var running: bool = false
@@ -103,6 +113,23 @@ func _process(_delta: float) -> void:
         
         _next_big_obstacle_depth += snappedf(randf_range(min_next_big_obstacle_depth, max_next_big_obstacle_depth), sprite_scale)
     
+    while _roots.depth + _half_screen_height * 1.5 > _next_moving_obstacle_depth:
+        
+        var new_moving_obstacle = moving_obstacle.instantiate()
+        
+        game_over.connect(Callable(new_moving_obstacle, "_on_game_over"))
+        
+        if randi_range(0,1) == 0:
+            new_moving_obstacle.position = Vector2(snappedf(-_half_screen_width, sprite_scale), _next_moving_obstacle_depth)
+            new_moving_obstacle.direction = 1.0
+        else:
+            new_moving_obstacle.position = Vector2(snappedf(_half_screen_width, sprite_scale), _next_moving_obstacle_depth)
+            new_moving_obstacle.direction = -1.0
+        new_moving_obstacle.speed = randf_range(min_moving_obstacle_speed, max_moving_obstacle_speed)
+        add_child(new_moving_obstacle)
+        
+        _next_moving_obstacle_depth += snappedf(randf_range(min_next_moving_obstacle_depth, max_next_moving_obstacle_depth), sprite_scale)
+    
     _camera.position[1] = _roots.depth
     _prev_depth = _roots.depth
 
@@ -127,6 +154,7 @@ func _on_game_start() -> void:
     _next_collectable_depth = _half_screen_height + snappedf(randf_range(min_next_collectable_depth, max_next_collectable_depth), sprite_scale)
     _next_obstacle_depth = _half_screen_height + snappedf(randf_range(min_next_obstacle_depth, max_next_obstacle_depth), sprite_scale)
     _next_big_obstacle_depth = _half_screen_height + snappedf(randf_range(min_next_big_obstacle_depth, max_next_big_obstacle_depth), sprite_scale)
+    _next_moving_obstacle_depth = _half_screen_height + snappedf(randf_range(min_next_moving_obstacle_depth, max_next_moving_obstacle_depth), sprite_scale)
     
     _update_growth_speed()
     

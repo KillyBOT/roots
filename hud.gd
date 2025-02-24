@@ -34,10 +34,10 @@ func _on_start_button_pressed() -> void:
     start_button_pressed.emit()
 
 func _on_increase_level() -> void:
-    starting_level = min(max_starting_level, starting_level + 1)
+    starting_level = 1 if starting_level == max_starting_level else starting_level + 1
     _level_select.text = "Level: " + str(starting_level)
 func _on_decrease_level() -> void:
-    starting_level = max(1, starting_level - 1)
+    starting_level = max_starting_level if starting_level == 1 else starting_level - 1
     _level_select.text = "Level: " + str(starting_level)
 
 func _on_game_start() -> void:

@@ -1,0 +1,44 @@
+[gd_scene load_steps=7 format=3 uid="uid://n5v7kbf75ohi"]
+
+[ext_resource type="Texture2D" uid="uid://dgtg8ry2nkodr" path="res://worm_1.png" id="1_dmsd0"]
+[ext_resource type="Script" path="res://moving_obstacle.gd" id="1_p41n2"]
+[ext_resource type="Texture2D" uid="uid://dw3vlx4wnc56x" path="res://worm_2.png" id="2_uh6ta"]
+[ext_resource type="Texture2D" uid="uid://c4mtdswphmgla" path="res://worm_4.png" id="4_uv1rn"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6sdbn"]
+size = Vector2(232, 16)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_t5pep"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("4_uv1rn")
+}, {
+"duration": 1.0,
+"texture": ExtResource("1_dmsd0")
+}, {
+"duration": 1.0,
+"texture": ExtResource("2_uh6ta")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[node name="moving_obstacle" type="Area2D" groups=["clear_on_start"]]
+script = ExtResource("1_p41n2")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 48)
+shape = SubResource("RectangleShape2D_6sdbn")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_t5pep")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(-128, -64)
+rect = Rect2(0, 0, 256, 128)
+
+[connection signal="screen_entered" from="VisibleOnScreenNotifier2D" to="." method="_on_screen_entered"]
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_screen_exited"]

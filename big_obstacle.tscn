@@ -1,8 +1,10 @@
-[gd_scene load_steps=2 format=3 uid="uid://006p6ggptq5s"]
+[gd_scene load_steps=3 format=3 uid="uid://006p6ggptq5s"]
 
 [ext_resource type="Texture2D" uid="uid://cx76n6ayxt2eb" path="res://big_rock.png" id="1_ejged"]
+[ext_resource type="Script" path="res://big_obstacle.gd" id="1_ktdr3"]
 
-[node name="big_obstacle" type="Area2D"]
+[node name="big_obstacle" type="Area2D" groups=["clear_on_start"]]
+script = ExtResource("1_ktdr3")
 
 [node name="Sprite2D" type="Sprite2D" parent="." groups=["clear_on_start"]]
 texture_filter = 1
@@ -11,3 +13,9 @@ texture = ExtResource("1_ejged")
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(129, 64, -5.66266, 64.2846, -216, 65, -231, 18, -199, -47, -85, -71, -65, -104, 115, -105, 176, -65, 232, 0, 232, 42)
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(3.49999, -15.5)
+scale = Vector2(24.35, 10.45)
+
+[connection signal="screen_exited" from="VisibleOnScreenNotifier2D" to="." method="_on_screen_exited"]
